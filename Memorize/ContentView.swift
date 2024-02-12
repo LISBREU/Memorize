@@ -10,8 +10,14 @@ import SwiftUI
 struct ContentView: View {
     let myTitle = Text("Memorize!").font(.largeTitle)
         .foregroundStyle(Color.pink)
-    let emojis: [String] = ["👻", "🎃", "🕷️", "👹", "☠️", "🧙‍♂️", "🦸‍♀️", "🍭", "🕸️", "🧟‍♂️", "💀", "🏴‍☠️", "😈"]
-    @State var cardCount: Int = 4
+    let emojisHallowene: [String] = ["👻", "🎃", "🕷️", "👹", "👻", "🕷️", "🕸️", "👹", "🕸️", "🧟‍♂️", "🎃", "🧟‍♂️", "😈", "😈"]
+    let emojisSport: [String] = ["⚽️", "🏀", "⚽️", "🏓", "🏒", "🏆", "🏐", "🏐", "🏀", "🏒", "🏓", "🏆"]
+    let emojisFlags: [String] = ["🇯🇵", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🇷🇺", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🇦🇷", "🇯🇵", "🇷🇺", "🇦🇷", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"]
+    @State var selectedEmojis: [String] = []
+    init() {
+        self._selectedEmojis = State(initialValue: emojisHallowene)
+    }
+    @State var cardCount: Int = 0
     var body: some View {
         VStack {
             myTitle
@@ -26,21 +32,59 @@ struct ContentView: View {
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]){
             ForEach(0..<cardCount, id: \.self) { index in
-                CardView(content: emojis[index])
+                CardView(content: selectedEmojis[index])
                     .aspectRatio(2/3, contentMode: .fit)
             }
         }
         .foregroundColor(.pink)
     }
     
+    
     var cardCountAdjusters: some View {
         HStack{
             cardRemover
+            Spacer()
+            haloweeneSelect
+            Spacer()
+            sportSelect
+            Spacer()
+            flagSelect
             Spacer()
             cardAdder
         }
         .imageScale(.large)
         .font(.largeTitle)
+    }
+
+    var haloweeneSelect: some View { 
+        VStack{
+            selectEmoji(contents: emojisHallowene, label: "13.circle.fill")
+            Text("Scary").font(.title3)
+        }
+    }
+    
+    var sportSelect: some View {
+        VStack{
+            selectEmoji(contents: emojisSport, label: "figure.run.circle.fill")
+            Text("Sport").font(.title3)
+        }
+    }
+    
+    var flagSelect: some View {
+        VStack{
+            selectEmoji(contents: emojisFlags, label: "flag.circle.fill")
+            Text("Flags").font(.title3)
+        }
+    }
+    
+    func selectEmoji(contents: [String], label: String) -> some View {
+        Button(action: {
+            selectedEmojis.removeAll()
+            selectedEmojis.append(contentsOf: contents)
+            if cardCount == 0 {cardCount += 4}
+        }, label: {
+            Image(systemName: label)
+        })
     }
     
     func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
