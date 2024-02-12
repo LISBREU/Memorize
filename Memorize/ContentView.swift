@@ -8,16 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
+    
     let myTitle = Text("Memorize!").font(.largeTitle)
         .foregroundStyle(Color.pink)
+    
     let emojisScary: [String] = ["👻", "🎃", "🕷️", "👹", "👻", "🕷️", "🕸️", "👹", "🕸️", "🧟‍♂️", "🎃", "🧟‍♂️", "😈", "😈"]
     let emojisSport: [String] = ["⚽️", "🏀", "⚽️", "🏓", "🏒", "🏆", "🏐", "🏐", "🏀", "🏒", "🏓", "🏆"]
     let emojisFlags: [String] = ["🇯🇵", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🇷🇺", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🇦🇷", "🇯🇵", "🇷🇺", "🇦🇷", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"]
     @State var selectedEmojis: [String] = []
-    init() {
-        self._selectedEmojis = State(initialValue: emojisScary)
-    }
-    @State var cardCount: Int = 0
+    
     var body: some View {
         VStack {
             myTitle
@@ -25,33 +24,39 @@ struct ContentView: View {
                 cards
             }
             Spacer()
-            cardCountAdjusters
+            selectTheme
         }
         .padding()
     }
     
+    func selectColor(mas: [String]) -> Color {
+        if mas == emojisFlags {
+            return .red
+        } else if mas == emojisSport {
+            return .blue
+        } else {
+            return .orange
+        }
+    }
+    
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]){
-            ForEach(0..<cardCount, id: \.self) { index in
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 90))]){
+            ForEach(0..<selectedEmojis.endIndex, id: \.self) { index in
                 CardView(content: selectedEmojis.randomElement() ?? selectedEmojis[index])
-                    .aspectRatio(2/3, contentMode: .fit)
+                    .aspectRatio(2/3, contentMode: .fill)
             }
         }
-        .foregroundColor(.pink)
+        .foregroundColor(selectColor(mas: selectedEmojis))
     }
     
     
-    var cardCountAdjusters: some View {
+    var selectTheme: some View {
         HStack{
-            cardRemover
-            Spacer()
             haloweeneSelect
             Spacer()
             sportSelect
             Spacer()
             flagSelect
-            Spacer()
-            cardAdder
         }
         .imageScale(.large)
         .font(.largeTitle)
@@ -82,28 +87,9 @@ struct ContentView: View {
         Button(action: {
             selectedEmojis.removeAll()
             selectedEmojis.append(contentsOf: contents)
-            cardCount = 4
         }, label: {
             Image(systemName: label)
         })
-    }
-    
-    func cardCountAdjuster(by offset: Int, symbol: String, content: [String] ) -> some View {
-        Button(action: {
-            cardCount += offset
-        }, label: {
-            Image(systemName: symbol)
-        })
-        .disabled(cardCount + offset < 1 || cardCount + offset > content.endIndex )
-    }
-    
-    var cardRemover: some View {
-        return cardCountAdjuster(by: -1, symbol: "minus.rectangle.portrait", content: selectedEmojis)
-    }
-    
-    var cardAdder: some View {
-        return cardCountAdjuster(by: 1, symbol: "plus.rectangle.portrait", content: selectedEmojis)
-        
     }
 }
 
