@@ -10,12 +10,12 @@ import SwiftUI
 struct ContentView: View {
     let myTitle = Text("Memorize!").font(.largeTitle)
         .foregroundStyle(Color.pink)
-    let emojisHallowene: [String] = ["👻", "🎃", "🕷️", "👹", "👻", "🕷️", "🕸️", "👹", "🕸️", "🧟‍♂️", "🎃", "🧟‍♂️", "😈", "😈"]
+    let emojisScary: [String] = ["👻", "🎃", "🕷️", "👹", "👻", "🕷️", "🕸️", "👹", "🕸️", "🧟‍♂️", "🎃", "🧟‍♂️", "😈", "😈"]
     let emojisSport: [String] = ["⚽️", "🏀", "⚽️", "🏓", "🏒", "🏆", "🏐", "🏐", "🏀", "🏒", "🏓", "🏆"]
     let emojisFlags: [String] = ["🇯🇵", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🇷🇺", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🇦🇷", "🇯🇵", "🇷🇺", "🇦🇷", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"]
     @State var selectedEmojis: [String] = []
     init() {
-        self._selectedEmojis = State(initialValue: emojisHallowene)
+        self._selectedEmojis = State(initialValue: emojisScary)
     }
     @State var cardCount: Int = 0
     var body: some View {
@@ -29,10 +29,11 @@ struct ContentView: View {
         }
         .padding()
     }
+    
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]){
             ForEach(0..<cardCount, id: \.self) { index in
-                CardView(content: selectedEmojis[index])
+                CardView(content: selectedEmojis.randomElement() ?? selectedEmojis[index])
                     .aspectRatio(2/3, contentMode: .fit)
             }
         }
@@ -58,7 +59,7 @@ struct ContentView: View {
 
     var haloweeneSelect: some View { 
         VStack{
-            selectEmoji(contents: emojisHallowene, label: "13.circle.fill")
+            selectEmoji(contents: emojisScary, label: "13.circle.fill")
             Text("Scary").font(.title3)
         }
     }
@@ -81,27 +82,27 @@ struct ContentView: View {
         Button(action: {
             selectedEmojis.removeAll()
             selectedEmojis.append(contentsOf: contents)
-            if cardCount == 0 {cardCount += 4}
+            cardCount = 4
         }, label: {
             Image(systemName: label)
         })
     }
     
-    func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
+    func cardCountAdjuster(by offset: Int, symbol: String, content: [String] ) -> some View {
         Button(action: {
             cardCount += offset
         }, label: {
             Image(systemName: symbol)
         })
-        .disabled(cardCount + offset < 1 || cardCount + offset > 12 )
+        .disabled(cardCount + offset < 1 || cardCount + offset > content.endIndex )
     }
     
     var cardRemover: some View {
-        return cardCountAdjuster(by: -1, symbol: "minus.rectangle.portrait")
+        return cardCountAdjuster(by: -1, symbol: "minus.rectangle.portrait", content: selectedEmojis)
     }
     
     var cardAdder: some View {
-        return cardCountAdjuster(by: 1, symbol: "plus.rectangle.portrait")
+        return cardCountAdjuster(by: 1, symbol: "plus.rectangle.portrait", content: selectedEmojis)
         
     }
 }
