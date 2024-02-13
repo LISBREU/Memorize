@@ -41,8 +41,8 @@ struct ContentView: View {
     
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 90))]){
-            ForEach(0..<selectedEmojis.endIndex, id: \.self) { index in
-                CardView(content: selectedEmojis.randomElement() ?? selectedEmojis[index])
+            ForEach(selectedEmojis.indices, id: \.self) { index in
+                CardView(content: selectedEmojis.shuffled()[index])
                     .aspectRatio(2/3, contentMode: .fill)
             }
         }
