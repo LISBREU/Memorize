@@ -5,6 +5,7 @@
 //  Created by Ilnur Shabanov on 13.02.2024.
 //
 
+// Это ViewModel
 import SwiftUI
 
 
